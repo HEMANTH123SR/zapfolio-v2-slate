@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { AptabaseProvider } from '@aptabase/react';
 
 import { hackerMedium } from "@/fonts/font";
 
@@ -19,7 +20,9 @@ export default function RootLayout({
       <body
         className={``}
       >
-        {children}
+
+        <AptabaseProvider appKey="A-EU-3102472158">{children}</AptabaseProvider>
+
 
 
       </body>

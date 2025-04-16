@@ -3,6 +3,9 @@ import type { UserData } from "@/lib/userdata.interface"
 import type { Metadata } from "next"
 
 import ProfileContent from "@/app/[username]/profile-content";
+import ProfileAnalytics from "@/components/profile-analytics";
+
+
 
 // Generate dynamic metadata for SEO
 export async function generateMetadata({ params }: { params: Promise<{ username: string }> }): Promise<Metadata> {
@@ -116,6 +119,8 @@ export default async function SlateThemeProfilePage({ params }: { params: Promis
 
                 <ProfileContent userData={userData} />
 
+
+                <ProfileAnalytics username={username} />
 
 
 
