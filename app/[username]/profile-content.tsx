@@ -1,14 +1,30 @@
 /* eslint-disable @next/next/no-img-element */
 
 
-
-
 import React from "react";
 import type { UserData } from "@/lib/userdata.interface";
+import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 
 interface ProfileContentProps {
     userData: UserData;
 }
+
+// Map month numbers to short month names
+const monthMap: { [key: number]: string } = {
+    1: "Jan",
+    2: "Feb",
+    3: "Mar",
+    4: "Apr",
+    5: "May",
+    6: "Jun",
+    7: "Jul",
+    8: "Aug",
+    9: "Sep",
+    10: "Oct",
+    11: "Nov",
+    12: "Dec"
+};
 
 const ProfileContent: React.FC<ProfileContentProps> = ({ userData }) => {
     const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
@@ -20,11 +36,20 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ userData }) => {
                     backgroundImage: "url('/top-left-right.svg')"
                 }}
             >
-                <div className="h-10"
+                <div className="h-10 flex justify-center items-center w-full"
                     style={{
                         backgroundImage: "url('/bottom.svg')"
                     }}
-                ></div>
+                >
+                    <Link
+                        href="https://zapfolio.in"
+                        target='_blank'
+                        className="text-sm text-black hover:text-violet-700 transition-colors flex items-center space-x-1"
+                    >
+                        <span>Build Your Portfolio</span>
+                        <ArrowUpRight className="w-4 h-4" strokeWidth={3} />
+                    </Link>
+                </div>
                 <div className="py-12 md:py-10">
                     {/* Header Section - Adjusted for small screens */}
                     <header className="mb-10 px-4 md:px-16">
@@ -124,12 +149,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ userData }) => {
                                                             {position.tenure && (
                                                                 <p className="text-sm text-gray-500 whitespace-nowrap">
                                                                     {position.tenure.start?.month && position.tenure.start?.year
-                                                                        ? `${position.tenure.start.month} ${position.tenure.start.year}`
+                                                                        ? `${monthMap[Number(position.tenure.start.month)]} ${position.tenure.start.year}`
                                                                         : position.tenure.start?.year || ''
                                                                     }
                                                                     {position.tenure.end
                                                                         ? ` - ${position.tenure.end.month && position.tenure.end.year
-                                                                            ? `${position.tenure.end.month} ${position.tenure.end.year}`
+                                                                            ? `${monthMap[Number(position.tenure.end.month)]} ${position.tenure.end.year}`
                                                                             : position.tenure.end.year || 'Present'}`
                                                                         : ' - Present'
                                                                     }
@@ -268,22 +293,13 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ userData }) => {
                     )}
 
                     {/* Zapfolio Call to Action */}
-                    <section className="mb-8"
+                    <section className="mb-8 pt-10 flex justify-center items-center"
                         style={{
                             backgroundImage: "url('/top-left-right.svg')"
                         }}
                     >
-                        <div className="p-6 rounded-lg text-center">
-                            <h2 className="text-xl font-bold mb-3">Create your own portfolio website</h2>
-                            <p className="text-gray-600 mb-4">Turn your LinkedIn profile into a beautiful portfolio website in just two clicks.</p>
-                            <a
-                                href="https://zapfolio.in"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition-colors inline-block"
-                            >
-                                Build your portfolio with Zapfolio
-                            </a>
+                        <div className="max-w-4xl mx-auto px-6">
+                            <p>© {new Date().getFullYear()} - Built with <Link target="_blank" href="https://zapfolio.in" className="text-violet-600 hover:text-violet-700 transition-colors">Zapfolio</Link></p>
                         </div>
                     </section>
                 </div>
@@ -293,3 +309,5 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ userData }) => {
 };
 
 export default ProfileContent;
+
+
