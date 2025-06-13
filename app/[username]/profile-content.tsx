@@ -3,31 +3,18 @@
 
 import React from "react";
 import type { UserData } from "@/lib/userdata.interface";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Mail, Phone, MapPin, Clock } from "lucide-react";
 import Link from "next/link";
 
 interface ProfileContentProps {
     userData: UserData;
 }
 
-// Map month numbers to short month names
-const monthMap: { [key: number]: string } = {
-    1: "Jan",
-    2: "Feb",
-    3: "Mar",
-    4: "Apr",
-    5: "May",
-    6: "Jun",
-    7: "Jul",
-    8: "Aug",
-    9: "Sep",
-    10: "Oct",
-    11: "Nov",
-    12: "Dec"
-};
-
-const ProfileContent: React.FC<ProfileContentProps> = ({ userData }) => {
-    const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
+export default function ProfileContent({ userData }: ProfileContentProps) {
+    const monthMap: { [key: number]: string } = {
+        1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May', 6: 'Jun',
+        7: 'Jul', 8: 'Aug', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dec'
+    };
 
     return (
         <div className="bg-white w-full h-full flex flex-col">
@@ -51,39 +38,57 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ userData }) => {
                     </Link>
                 </div>
                 <div className="py-12 md:py-10">
-                    {/* Header Section - Adjusted for small screens */}
-                    <header className="mb-10 px-4 md:px-16">
-                        <div className="flex flex-col md:flex-row md:space-x-5 md:items-start md:justify-between">
-                            <div className="md:max-w-xl mb-8 md:mb-0">
-                                <h2 className="font-medium text-4xl mb-3">Hello! I am {fullName}</h2>
-                                {userData.headline && (
-                                    <p className="text-lg font-medium mb-6">{userData.headline}</p>
-                                )}
-                                {userData.publicIdentifier && (
-                                    <a
-                                        href={`https://linkedin.com/in/${userData.publicIdentifier}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors inline-flex items-center gap-2"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-                                        </svg>
-                                        Connect with me on LinkedIn
-                                    </a>
-                                )}
-                            </div>
-                            {userData.image && (
-                                <div className="shrink-0 w-40 h-40 md:w-56 md:h-56 mx-auto md:mx-0">
-                                    <img
-                                        src={`/api/proxy-image?url=${encodeURIComponent(userData.image)}`}
-                                        alt={fullName}
-                                        className="rounded-md object-cover border-4 w-full h-full"
-                                    />
+                    <div className="flex flex-col md:flex-row gap-8 items-start mb-8 px-4 md:px-16">
+                        <div className="flex-shrink-0">
+                            {userData.image ? (
+                                <img
+                                    src={`/api/proxy-image?url=${encodeURIComponent(userData.image)}`}
+                                    alt={`${userData.firstName} ${userData.lastName}`}
+                                    className="w-40 h-40 rounded-full object-cover border-4 border-white shadow-lg"
+                                />
+                            ) : (
+                                <div className="w-40 h-40 rounded-full bg-gray-200 flex items-center justify-center border-4 border-white shadow-lg">
+                                    <span className="text-4xl font-medium text-gray-500">
+                                        {userData.firstName?.[0]}{userData.lastName?.[0]}
+                                    </span>
                                 </div>
                             )}
                         </div>
-                    </header>
+                        <div className="flex-1">
+                            <h1 className="text-3xl font-bold mb-2">
+                                {userData.firstName} {userData.lastName}
+                            </h1>
+                            {userData.headline && (
+                                <p className="text-gray-600 mb-6 text-lg">{userData.headline}</p>
+                            )}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {userData.contactInfo?.email && (
+                                    <a href={`mailto:${userData.contactInfo.email}`} className="flex items-center gap-2 text-blue-600 hover:text-blue-800">
+                                        <Mail className="w-5 h-5" />
+                                        <span>{userData.contactInfo.email}</span>
+                                    </a>
+                                )}
+                                {userData.contactInfo?.phone && (
+                                    <a href={`tel:${userData.contactInfo.phone}`} className="flex items-center gap-2 text-blue-600 hover:text-blue-800">
+                                        <Phone className="w-5 h-5" />
+                                        <span>{userData.contactInfo.phone}</span>
+                                    </a>
+                                )}
+                                {userData.contactInfo?.address && (
+                                    <div className="flex items-center gap-2 text-gray-600">
+                                        <MapPin className="w-5 h-5" />
+                                        <span>{userData.contactInfo.address}</span>
+                                    </div>
+                                )}
+                                {userData.contactInfo?.availabilityHours && (
+                                    <div className="flex items-center gap-2 text-gray-600">
+                                        <Clock className="w-5 h-5" />
+                                        <span>{userData.contactInfo.availabilityHours}</span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
 
                     {/* Bio Section */}
                     {userData.summary && (
@@ -292,6 +297,456 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ userData }) => {
                         </section>
                     )}
 
+                    {/* Projects Section */}
+                    {userData.projects && userData.projects.length > 0 && (
+                        <section className="py-10 px-4 md:px-16"
+                            style={{
+                                backgroundImage: "url('/top.svg')"
+                            }}
+                        >
+                            <h2 className="text-2xl font-bold mb-6">Projects</h2>
+                            <div className="space-y-10">
+                                {userData.projects.map((project, index) => (
+                                    <div key={`proj-${index}`} className="relative flex gap-6">
+                                        <div className="flex flex-col items-center w-1/3">
+                                            {project.imageUrl ? (
+                                                <div className="shrink-0 z-10 bg-white p-1 w-full">
+                                                    <img
+                                                        src={`/api/proxy-image?url=${encodeURIComponent(project.imageUrl)}`}
+                                                        alt={project.title || ''}
+                                                        className="w-full h-48 object-cover rounded-md border"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div className="w-full h-48 bg-gray-100 border rounded-md flex items-center justify-center shrink-0 z-10 p-1">
+                                                    <span className="text-2xl font-medium text-gray-500">
+                                                        {project.title?.[0] || 'P'}
+                                                    </span>
+                                                </div>
+                                            )}
+                                            {index < (userData.projects?.length ?? 0) - 1 && (
+                                                <div className="h-24 w-2 flex justify-center">
+                                                    <svg width="4" height="100%" viewBox="0 0 4 100" xmlns="http://www.w3.org/2000/svg">
+                                                        <line x1="2" y1="0" x2="2" y2="100" stroke="#d1d5db" strokeWidth="2" strokeDasharray="4 4" />
+                                                    </svg>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="flex-1">
+                                            <div className="flex items-start justify-between mb-2">
+                                                <h3 className="font-medium text-xl">{project.title}</h3>
+                                                {project.startDate && (
+                                                    <p className="text-sm text-gray-500 whitespace-nowrap">
+                                                        {project.startDate.month && project.startDate.year
+                                                            ? `${monthMap[Number(project.startDate.month)]} ${project.startDate.year}`
+                                                            : project.startDate.year || ''
+                                                        }
+                                                        {project.endDate
+                                                            ? ` - ${project.endDate.month && project.endDate.year
+                                                                ? `${monthMap[Number(project.endDate.month)]} ${project.endDate.year}`
+                                                                : project.endDate.year || 'Present'}`
+                                                            : project.ongoing ? ' - Present' : ''
+                                                        }
+                                                    </p>
+                                                )}
+                                            </div>
+                                            {project.description && (
+                                                <p className="text-gray-700 mb-4">{project.description}</p>
+                                            )}
+                                            {project.technologies && project.technologies.length > 0 && (
+                                                <div className="flex flex-wrap gap-2 mb-4">
+                                                    {project.technologies.map((tech, tIndex) => (
+                                                        <span
+                                                            key={`tech-${tIndex}`}
+                                                            className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded"
+                                                        >
+                                                            {tech}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            )}
+                                            {project.url && (
+                                                <a
+                                                    href={project.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-blue-600 hover:text-blue-800 inline-flex items-center gap-1"
+                                                >
+                                                    View Project <ArrowUpRight className="w-4 h-4" />
+                                                </a>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {/* Research Papers Section */}
+                    {userData.researchPapers && userData.researchPapers.length > 0 && (
+                        <section className="py-10 px-4 md:px-16"
+                            style={{
+                                backgroundImage: "url('/top.svg')"
+                            }}
+                        >
+                            <h2 className="text-2xl font-bold mb-6">Research Papers</h2>
+                            <div className="space-y-6">
+                                {userData.researchPapers.map((paper, index) => (
+                                    <div key={`paper-${index}`} className="border rounded-lg p-6 hover:shadow-lg transition-shadow">
+                                        <h3 className="font-medium text-xl mb-2">{paper.title}</h3>
+                                        {paper.authors && (
+                                            <p className="text-gray-600 mb-2">By {paper.authors.join(', ')}</p>
+                                        )}
+                                        {paper.abstract && (
+                                            <p className="text-gray-700 mb-4">{paper.abstract}</p>
+                                        )}
+                                        <div className="flex flex-wrap gap-4 text-sm text-gray-500">
+                                            {paper.journal && <span>📚 {paper.journal}</span>}
+                                            {paper.publicationDate && (
+                                                <span>
+                                                    📅 {monthMap[Number(paper.publicationDate.month)]} {paper.publicationDate.year}
+                                                </span>
+                                            )}
+                                            {paper.citations && <span>📊 {paper.citations} citations</span>}
+                                        </div>
+                                        {paper.url && (
+                                            <a
+                                                href={paper.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-blue-600 hover:text-blue-800 inline-flex items-center gap-1 mt-4"
+                                            >
+                                                Read Paper <ArrowUpRight className="w-4 h-4" />
+                                            </a>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {/* Articles Section */}
+                    {userData.articles && userData.articles.length > 0 && (
+                        <section className="py-10 px-4 md:px-16"
+                            style={{
+                                backgroundImage: "url('/top.svg')"
+                            }}
+                        >
+                            <h2 className="text-2xl font-bold mb-6">Articles</h2>
+                            <div className="space-y-10">
+                                {userData.articles.map((article, index) => (
+                                    <div key={`article-${index}`} className="relative flex gap-6">
+                                        <div className="flex flex-col items-center w-1/3">
+                                            {article.imageUrl ? (
+                                                <div className="shrink-0 z-10 bg-white p-1 w-full">
+                                                    <img
+                                                        src={`/api/proxy-image?url=${encodeURIComponent(article.imageUrl)}`}
+                                                        alt={article.title || ''}
+                                                        className="w-full h-48 object-cover rounded-md border"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div className="w-full h-48 bg-gray-100 border rounded-md flex items-center justify-center shrink-0 z-10 p-1">
+                                                    <span className="text-2xl font-medium text-gray-500">
+                                                        {article.title?.[0] || 'A'}
+                                                    </span>
+                                                </div>
+                                            )}
+                                            {index < (userData.articles?.length ?? 0) - 1 && (
+                                                <div className="h-24 w-2 flex justify-center">
+                                                    <svg width="4" height="100%" viewBox="0 0 4 100" xmlns="http://www.w3.org/2000/svg">
+                                                        <line x1="2" y1="0" x2="2" y2="100" stroke="#d1d5db" strokeWidth="2" strokeDasharray="4 4" />
+                                                    </svg>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="flex-1">
+                                            <div className="flex items-start justify-between mb-2">
+                                                <h3 className="font-medium text-xl">{article.title}</h3>
+                                                {article.publishDate && (
+                                                    <p className="text-sm text-gray-500 whitespace-nowrap">
+                                                        {monthMap[Number(article.publishDate.month)]} {article.publishDate.year}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            {article.platform && (
+                                                <p className="text-gray-500 mb-2">{article.platform}</p>
+                                            )}
+                                            {article.summary && (
+                                                <details className="mb-4">
+                                                    <summary className="text-blue-600 hover:text-blue-800 cursor-pointer">
+                                                        Read Summary
+                                                    </summary>
+                                                    <p className="text-gray-700 mt-2">{article.summary}</p>
+                                                </details>
+                                            )}
+                                            {article.url && (
+                                                <a
+                                                    href={article.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-blue-600 hover:text-blue-800 inline-flex items-center gap-1"
+                                                >
+                                                    Read Article <ArrowUpRight className="w-4 h-4" />
+                                                </a>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {/* Awards Section - Remove connecting lines */}
+                    {userData.awards && userData.awards.length > 0 && (
+                        <section className="py-10 px-4 md:px-16"
+                            style={{
+                                backgroundImage: "url('/top.svg')"
+                            }}
+                        >
+                            <h2 className="text-2xl font-bold mb-6">Awards & Recognition</h2>
+                            <div className="space-y-10">
+                                {userData.awards.map((award, index) => (
+                                    <div key={`award-${index}`} className="relative flex gap-6">
+                                        <div className="flex flex-col items-center w-1/3">
+                                            {award.imageUrl ? (
+                                                <div className="shrink-0 z-10 bg-white p-1 w-full">
+                                                    <img
+                                                        src={`/api/proxy-image?url=${encodeURIComponent(award.imageUrl)}`}
+                                                        alt={award.title || ''}
+                                                        className="w-full h-48 object-contain rounded-md border"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div className="w-full h-48 bg-gray-100 border rounded-md flex items-center justify-center shrink-0 z-10 p-1">
+                                                    <span className="text-2xl font-medium text-gray-500">
+                                                        {award.title?.[0] || 'A'}
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="flex-1">
+                                            <div className="flex items-start justify-between mb-2">
+                                                <h3 className="font-medium text-xl">{award.title}</h3>
+                                                {award.date && (
+                                                    <p className="text-sm text-gray-500 whitespace-nowrap">
+                                                        {monthMap[Number(award.date.month)]} {award.date.year}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            <p className="text-gray-500 mb-2">{award.issuer}</p>
+                                            {award.description && (
+                                                <p className="text-gray-700">{award.description}</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {/* Gallery Section - Improved UI */}
+                    {userData.gallery && userData.gallery.length > 0 && (
+                        <section className="py-10 px-4 md:px-16"
+                            style={{
+                                backgroundImage: "url('/top.svg')"
+                            }}
+                        >
+                            <h2 className="text-2xl font-bold mb-6">Gallery</h2>
+                            <div className="grid grid-cols-1 lg:grid-cols-2  gap-6">
+                                {userData.gallery.map((item, index) => (
+                                    <div key={`gallery-${index}`} className="group relative bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                                        <div className="aspect-w-16 aspect-h-9">
+                                            {item.imageUrl ? (
+                                                <img
+                                                    src={`/api/proxy-image?url=${encodeURIComponent(item.imageUrl)}`}
+                                                    alt={item.title || ''}
+                                                    className="w-full h-64 object-cover"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-64 bg-gray-100 flex items-center justify-center">
+                                                    <span className="text-2xl font-medium text-gray-500">
+                                                        {item.title?.[0] || 'G'}
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="p-4">
+                                            <h3 className="font-medium text-lg mb-2">{item.title}</h3>
+                                            {item.description && (
+                                                <p className="text-gray-600 text-sm mb-3 line-clamp-2">{item.description}</p>
+                                            )}
+                                            <div className="flex flex-wrap gap-2">
+                                                {item.category && (
+                                                    <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                                                        {item.category}
+                                                    </span>
+                                                )}
+                                                {item.tags && item.tags.map((tag, tagIndex) => (
+                                                    <span
+                                                        key={`tag-${tagIndex}`}
+                                                        className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full"
+                                                    >
+                                                        {tag}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                            {item.date && (
+                                                <p className="text-sm text-gray-500 mt-3">
+                                                    {monthMap[Number(item.date.month)]} {item.date.year}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {/* Certifications Section */}
+                    {userData.certifications && userData.certifications.length > 0 && (
+                        <section className="py-10 px-4 md:px-16"
+                            style={{
+                                backgroundImage: "url('/top.svg')"
+                            }}
+                        >
+                            <h2 className="text-2xl font-bold mb-6">Certifications</h2>
+                            <div className="space-y-10">
+                                {userData.certifications.map((cert, index) => (
+                                    <div key={`cert-${index}`} className="relative flex gap-6">
+                                        <div className="flex flex-col items-center w-1/3">
+                                            {cert.credentialUrl ? (
+                                                <div className="shrink-0 z-10 bg-white p-1 w-full">
+                                                    <img
+                                                        src={`/api/proxy-image?url=${encodeURIComponent(cert.credentialUrl)}`}
+                                                        alt={cert.name || ''}
+                                                        className="w-full h-48 object-contain rounded-md border"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div className="w-full h-48 bg-gray-100 border rounded-md flex items-center justify-center shrink-0 z-10 p-1">
+                                                    <span className="text-2xl font-medium text-gray-500">
+                                                        {cert.name?.[0] || 'C'}
+                                                    </span>
+                                                </div>
+                                            )}
+                                            {index < (userData.certifications?.length ?? 0) - 1 && (
+                                                <div className="h-24 w-2 flex justify-center">
+                                                    <svg width="4" height="100%" viewBox="0 0 4 100" xmlns="http://www.w3.org/2000/svg">
+                                                        <line x1="2" y1="0" x2="2" y2="100" stroke="#d1d5db" strokeWidth="2" strokeDasharray="4 4" />
+                                                    </svg>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="flex-1">
+                                            <div className="flex items-start justify-between mb-2">
+                                                <h3 className="font-medium text-xl">{cert.name}</h3>
+                                                {cert.issueDate && (
+                                                    <p className="text-sm text-gray-500 whitespace-nowrap">
+                                                        {monthMap[Number(cert.issueDate.month)]} {cert.issueDate.year}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            <p className="text-gray-500 mb-2">{cert.issuer}</p>
+                                            {cert.expiryDate && (
+                                                <p className="text-sm text-gray-500 mb-4">
+                                                    Expires: {monthMap[Number(cert.expiryDate.month)]} {cert.expiryDate.year}
+                                                </p>
+                                            )}
+                                            {cert.credentialUrl && (
+                                                <a
+                                                    href={cert.credentialUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-blue-600 hover:text-blue-800 inline-flex items-center gap-1"
+                                                >
+                                                    View Credential <ArrowUpRight className="w-4 h-4" />
+                                                </a>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {/* Clients Section */}
+                    {userData.clients && userData.clients.length > 0 && (
+                        <section className="py-10 px-4 md:px-16"
+                            style={{
+                                backgroundImage: "url('/top.svg')"
+                            }}
+                        >
+                            <h2 className="text-2xl font-bold mb-6">Clients</h2>
+                            <div className="space-y-10">
+                                {userData.clients.map((client, index) => (
+                                    <div key={`client-${index}`} className="relative flex gap-6">
+                                        <div className="flex flex-col items-center">
+                                            {client.logoUrl ? (
+                                                <div className="shrink-0 z-10 bg-white p-1">
+                                                    <img
+                                                        src={`/api/proxy-image?url=${encodeURIComponent(client.logoUrl)}`}
+                                                        alt={client.name || ''}
+                                                        width={56}
+                                                        height={56}
+                                                        className="rounded-md object-contain border"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div className="w-14 h-14 bg-gray-100 border rounded-md flex items-center justify-center shrink-0 z-10 p-1">
+                                                    <span className="text-lg font-medium text-gray-500">
+                                                        {client.name?.[0] || 'C'}
+                                                    </span>
+                                                </div>
+                                            )}
+                                            {index < (userData.clients?.length ?? 0) - 1 && (
+                                                <div className="h-24 w-2 flex justify-center">
+                                                    <svg width="4" height="100%" viewBox="0 0 4 100" xmlns="http://www.w3.org/2000/svg">
+                                                        <line x1="2" y1="0" x2="2" y2="100" stroke="#d1d5db" strokeWidth="2" strokeDasharray="4 4" />
+                                                    </svg>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="flex-1">
+                                            <div className="flex items-start justify-between mb-2">
+                                                <h3 className="font-medium text-xl">{client.name}</h3>
+                                                {client.startDate && (
+                                                    <p className="text-sm text-gray-500 whitespace-nowrap">
+                                                        {client.startDate.month && client.startDate.year
+                                                            ? `${monthMap[Number(client.startDate.month)]} ${client.startDate.year}`
+                                                            : client.startDate.year || ''
+                                                        }
+                                                        {client.endDate
+                                                            ? ` - ${client.endDate.month && client.endDate.year
+                                                                ? `${monthMap[Number(client.endDate.month)]} ${client.endDate.year}`
+                                                                : client.endDate.year || 'Present'}`
+                                                            : client.ongoing ? ' - Present' : ''
+                                                        }
+                                                    </p>
+                                                )}
+                                            </div>
+                                            {client.industry && (
+                                                <p className="text-gray-500 mb-2">{client.industry}</p>
+                                            )}
+                                            {client.workDescription && (
+                                                <p className="text-gray-700 mb-4">{client.workDescription}</p>
+                                            )}
+                                            {client.testimonial && (
+                                                <div className="bg-gray-50 p-4 rounded-lg">
+                                                    <p className="text-gray-700 italic mb-2">&ldquo;{client.testimonial.text}&rdquo;</p>
+                                                    <p className="text-sm text-gray-600">
+                                                        - {client.testimonial.author}
+                                                        {client.testimonial.position && `, ${client.testimonial.position}`}
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
                     {/* Zapfolio Call to Action */}
                     <section className="mb-8 pt-10 flex justify-center items-center"
                         style={{
@@ -306,8 +761,6 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ userData }) => {
             </div>
         </div>
     );
-};
-
-export default ProfileContent;
+}
 
 
